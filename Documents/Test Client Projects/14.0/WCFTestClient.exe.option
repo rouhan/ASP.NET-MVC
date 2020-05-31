@@ -1,0 +1,5 @@
+SecurityPrompt : Enabled
+RefreshPrompt : Enabled
+RegenerateConfig : Enabled
+ProjectBase:C:\Users\asad\AppData\Local\Temp\Test Client Projects\14.0
+http://localhost:57071/AccountWebService.svc

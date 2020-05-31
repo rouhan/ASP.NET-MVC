@@ -1,0 +1,260 @@
+if [ "$SHELL" = "/bin/zsh.exe" ]; then
+  MKDIR="/bin/toybox.exe mkdir"
+  LN="/bin/toybox.exe ln"
+  LS="/bin/toybox.exe ls"
+else
+  SHELL="/bin/bash.exe"
+  MKDIR="/bin/busybox.exe mkdir"
+  LN="/bin/busybox.exe ln"
+  LS="/bin/busybox.exe ls"
+  /bin/busybox.exe stty ixany
+fi
+unset MAILCHECK
+export EXECIGNORE="*.dll"
+builtin ulimit -c 0
+[ -d "/home/mobaxterm/" ] || $MKDIR -p /home/mobaxterm
+[ -d "/home/$USERNAME/" ] || $LN -sf /home/mobaxterm "/home/$USERNAME" 2>/dev/null
+[ -n "$MOBASTARTUPDIR" ] && cd "${MOBASTARTUPDIR}" 2>/dev/null || cd "/home/mobaxterm" 2>/dev/null
+
+PATH="/bin:$PATH"
+HOME="/home/mobaxterm"
+TEMP="/tmp"
+TMP="/tmp"
+export LIBGL_ALWAYS_INDIRECT=1
+[ -z "$VERSION" ] && VERSION="11.1"
+[ -z "$DISPLAY" ] && DISPLAY="127.0.0.1:0"
+if [ "$SHELL" = "/bin/zsh.exe" ]; then
+  setopt PROMPT_SUBST
+  NP=0
+  if [ "$FANCYPS1" = "rxvt" ]; then
+    PS1='
+%F{y}[%D %*]%F{def}  %F{m}%~%F{def}
+%F{c}[%n.%m]%F{def} > '
+  elif [ "$FANCYPS1" = "nosep" ]; then
+    PS1='
+%F{y}[%D %*]%F{def}  %F{m}%~%F{def}
+%F{c}[%n.%m]%F{def} ➤ '
+    precmd() {
+      builtin print -Pn "\e]0;$PWD\a"
+    }
+  else
+    PS1='`r0=$?;if [ -z "$NP" ]; then [ $r0 = 0 ] && s0="\e(B \e[32m\e(0d" || s0="\e(B \e[31m\e(0e";i0=3;while [ $i0 -lt ${COLUMNS:-80} ];do s0="q$s0";i0=$[$i0+1];done;builtin echo -e "\n\e[1;30m\e(0$s0\e(B\e[0m";fi`
+%F{y}[%D %*]%F{def}  %F{m}%~%F{def}
+%F{c}[%n.%m]%F{def} ➤ '
+    precmd() {
+      [ "$NP" = "0" ] && NP=1 || unset NP; builtin print -Pn "\e]0;$PWD\a"
+    }
+    unset FANCYPS1
+    export NP
+  fi
+  StatusLine="For more info, type \e[35mhelp\e[0m or click on the help button above.      "
+elif [ "$FANCYPS1" = "yes" ]; then
+  NP=0
+  PROMPT_COMMAND='r0=$?;if [ -z "$NP" ]; then i0=0;s0="";while [ "$i0" -lt "${COLUMNS:-80}" ];do s0="q$s0";i0=$[$i0+1];done;builtin echo -ne "\n\e[1;30m\e(0$s0\e(B\e[0m"; [ $r0 = 0 ] && builtin echo -ne "\e[1A\e[32m\e(0d\e(B\e[0m\e[1B" || builtin echo -ne "\e[1A\e[31m\e(0e\e(B\e[0m\e[1B";else unset NP;fi;history -a'
+  PS1='\[\e]0;$PWD\007\]
+\[\e[33m\][\D{%Y-%m-%d %H:%M.%S}]\[\e[0m\]  \[\e[35m\]\w\[\e[0m\]
+\[\e[36m\][\u.\h]\[\e[0m\] \[\e(0\]b\[\e(B\] '
+  unset FANCYPS1
+  export NP
+  StatusLine="Each command status is specified by a special symbol (\e[32m\e(0d\e(B\e[0m or \e[31m\e(0e\e(B\e[0m)    "
+else
+  if [ "$FANCYPS1" = "rxvt" ]; then
+    PS1='
+\[\e[1;33m\][\D{%Y-%m-%d %H:%M.%S}]\[\e[0m\]  \[\e[1;35m\]\w\[\e[0m\]
+\[\e[1;36m\][\u.\h]\[\e[0m\] > '
+  elif [ "$FANCYPS1" = "nosep" ]; then
+    PS1='\[\e]0;$PWD\007\]
+\[\e[33m\][\D{%Y-%m-%d %H:%M.%S}]\[\e[0m\]  \[\e[35m\]\w\[\e[0m\]
+\[\e[36m\][\u.\h]\[\e[0m\] \[\e(0\]b\[\e(B\] '
+  else
+    PS1='
+\[\e[33m\][\D{%Y-%m-%d %H:%M.%S}]\[\e[0m\]  \[\e[35m\]\w\[\e[0m\]
+\[\e[36m\][\u.\h]\[\e[0m\] \[\e(0\]b\[\e(B\] '
+  fi
+  PROMPT_COMMAND="history -a"
+  StatusLine="For more info, type \e[35mhelp\e[0m or click on the help button above.      "
+fi
+HISTCONTROL=ignoredups
+export HISTIGNORE="exit:reset"
+if [ "$SHELL" = "/bin/zsh.exe" ]; then
+  HISTFILE=/home/mobaxterm/.zsh_history
+else
+  HISTFILE=/home/mobaxterm/.bash_history
+fi
+HISTSIZE=36000
+SAVEHIST=36000
+TMOUT=0
+KRB5CCNAME=FILE:/etc/krb5_cc_cache
+KRB5_CONFIG=/etc/krb5.conf
+EDITOR=/bin/vim
+GIT_EDITOR=/bin/vim
+VISUAL=/bin/vicron
+HISTTIMEFORMAT="[%Y-%m-%d %H:%M:%S] "
+export TMP TEMP SHELL PATH VERSION HOME DISPLAY PS1 PROMPT_COMMAND HISTCONTROL HISTIGNORE HISTFILE HISTSIZE SAVEHIST TMOUT KRB5CCNAME KRB5_CONFIG EDITOR GIT_EDITOR VISUAL HISTTIMEFORMAT
+
+if [ -n "$FIRSTTIME" ]; then
+if [ "$TERM" = "xterm" ]; then
+if [ "$POPUPMODE" = "yes" ]; then
+builtin echo -e "\e[0m \e(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk\e(B
+ \e(0x\e(B                \e[1;32m\e(0\`\e(B MobaXterm Personal Edition v11.1 \e(0\`\e(B\e[0m                \e(0x\e(B
+ \e(0x\e(B              \e[1;33m(X server, SSH client and network tools)\e[0m              \e(0x\e(B
+ \e(0x\e(B                                                                    \e(0x\e(B
+ \e(0x\e(B \e(0b\e(B Your computer drives are accessible through the \e[35m/drives\e[0m path     \e(0x\e(B
+ \e(0x\e(B \e(0b\e(B Your DISPLAY is set to \e[35m${EXPORTED_DISPLAY}\e[0m                       \e(0x\e(B
+ \e(0x\e(B \e(0b\e(B `printf "%-76s" "Use \e[36m$POPUPKEY\e[0m to close this console"`\e(0x\e(B
+ \e(0x\e(B \e(0b\e(B `printf "%-76s" "Use \e[36m$SHOWHIDEKEY\e[0m to show/hide MobaXterm"`\e(0x\e(B
+ \e(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj\e(B"
+elif [ "$DWMMODE" = "yes" ]; then
+builtin echo -e "\e[0m \e(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk\e(B
+ \e(0x\e(B                \e[1;32m\e(0\`\e(B MobaXterm Personal Edition v11.1 \e(0\`\e(B\e[0m                \e(0x\e(B
+ \e(0x\e(B              \e[1;33m(X server, SSH client and network tools)\e[0m              \e(0x\e(B
+ \e(0x\e(B                                                                    \e(0x\e(B
+ \e(0x\e(B This is an \e[1;35mX11\e[0m session with the \"tiling\" window manager \e[1;35mDWM\e[0m        \e(0x\e(B
+ \e(0x\e(B                                                                    \e(0x\e(B
+ \e(0x\e(B In this frame, X11 windows are managed in \e[1;36mtile\e[0m or \e[1;36mfloat\e[0m mode.      \e(0x\e(B
+ \e(0x\e(B   - \e[1;31mTile mode\e[0m: windows are automatically placed side by side       \e(0x\e(B
+ \e(0x\e(B   - \e[1;31mFloat mode\e[0m: windows can be resized and moved freely using      \e(0x\e(B
+ \e(0x\e(B     \e[1;36mAlt + Left-click\e[0m for moving and \e[1;36mAlt + Right-click\e[0m for resizing \e(0x\e(B
+ \e(0x\e(B                                                                    \e(0x\e(B
+ \e(0x\e(B The small bottom \e[1;35mtaskbar\e[0m allows you to:                            \e(0x\e(B
+ \e(0x\e(B   - Switch from float to tile mode by clicking on the \e[1;33mleft\e[0m         \e(0x\e(B
+ \e(0x\e(B   - Swap windows positions by clicking on the \e[1;33mmiddle\e[0m               \e(0x\e(B
+ \e(0x\e(B   - Start a new RXVT console by clicking on the \e[1;33mright\e[0m              \e(0x\e(B
+ \e(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj\e(B"
+elif [ "$FANCYPS1" != "rxvt" ]; then
+    builtin echo -e "\e[0m     \e(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk\e(B
+     \e(0x\e(B                \e[32m\e(0\`\e(B MobaXterm Personal Edition v11.1 \e(0\`\e(B\e[0m                \e(0x\e(B
+     \e(0x\e(B              \e[33m(X server, SSH client and network tools)\e[0m              \e(0x\e(B
+     \e(0x\e(B                                                                    \e(0x\e(B
+     \e(0x\e(B \e(0b\e(B Your computer drives are accessible through the \e[35m/drives\e[0m path     \e(0x\e(B
+     \e(0x\e(B \e(0b\e(B Your DISPLAY is set to \e[35m${EXPORTED_DISPLAY}\e[0m                       \e(0x\e(B
+     \e(0x\e(B \e(0b\e(B When using \e[35mSSH\e[0m, your remote DISPLAY is automatically forwarded   \e(0x\e(B
+     \e(0x\e(B \e(0b\e(B ${StatusLine}\e(0x\e(B
+     \e(0x\e(B                                                                    \e(0x\e(B
+     \e(0x\e(B \e[31m\e(0\`\e(B Important:\e[0m                                                       \e(0x\e(B
+     \e(0x\e(B \e[36mThis is MobaXterm Personal Edition. The Professional edition\e[0m       \e(0x\e(B
+     \e(0x\e(B \e[36mallows you to customize MobaXterm for your company: you can add\e[0m    \e(0x\e(B
+     \e(0x\e(B \e[36myour own logo, your parameters, your welcome message and generate\e[0m  \e(0x\e(B
+     \e(0x\e(B \e[36meither an MSI installation package or a portable executable.\e[0m       \e(0x\e(B
+     \e(0x\e(B \e[36mWe can also modify MobaXterm or develop the plugins you need.\e[0m      \e(0x\e(B
+     \e(0x\e(B \e[33mFor more information: \e[35m\e[4mhttps://mobaxterm.mobatek.net/download.html\e[0m  \e(0x\e(B
+     \e(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj\e(B"
+fi
+unset FIRSTTIME
+unset StatusLine
+unset FANCYPS1
+
+if [ "$SHELL" = "/bin/zsh.exe" ]; then
+  [ -e "/usr/share/zsh.tar" ] && /bin/toybox.exe tar -C /usr/share -xf /usr/share/zsh.tar && /bin/toybox.exe rm -f /usr/share/zsh.tar
+  setopt noautomenu
+  setopt nomenucomplete
+  setopt INC_APPEND_HISTORY
+  setopt HIST_IGNORE_ALL_DUPS
+  setopt HIST_IGNORE_SPACE
+  setopt HIST_REDUCE_BLANKS
+  setopt HIST_VERIFY
+  setopt EXTENDED_GLOB
+  setopt PROMPT_SUBST
+  unsetopt CASE_GLOB
+  unsetopt CASE_MATCH
+  setopt nocaseglob
+  unsetopt caseglob
+  unsetopt casematch
+  setopt complete_aliases
+  setopt +o nomatch
+  if [ ! -e "/home/mobaxterm/.zcompdump$CYGUTILSVERSION" ]; then
+    /bin/toybox.exe rm -f /home/mobaxterm/.zcompdump*
+    autoload -Uz compinit
+    compinit -C
+    builtin echo > "/home/mobaxterm/.zcompdump$CYGUTILSVERSION"
+  else
+    autoload -Uz compinit
+    compinit -C
+  fi
+  zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+  zstyle ':completion:*' accept-exact '*(N)'
+  zstyle ':completion:*:complete:-command-:*:*' ignored-patterns '*.dll|*.DLL|*.nls|*.NLS|*.log|*.ini|*.inf|*.sys|*.xml|*.png|*.ocx|*.cpl|*.msc|*.xsl|*.ax|*.acm|*.conf|*.dat|*.tlb|*.drv'
+  typeset -A key
+  key[Home]="$terminfo[khome]"
+  key[End]="$terminfo[kend]"
+  key[Insert]="$terminfo[kich1]"
+  key[Backspace]="$terminfo[kbs]"
+  key[Delete]="$terminfo[kdch1]"
+  key[Up]="$terminfo[kcuu1]"
+  key[Down]="$terminfo[kcud1]"
+  key[Left]="$terminfo[kcub1]"
+  key[Right]="$terminfo[kcuf1]"
+  key[PageUp]="$terminfo[kpp]"
+  key[PageDown]="$terminfo[knp]"
+  [[ -n "$key[Home]"      ]] && bindkey -- "$key[Home]"      beginning-of-line
+  [[ -n "$key[End]"       ]] && bindkey -- "$key[End]"       end-of-line
+  [[ -n "$key[Insert]"    ]] && bindkey -- "$key[Insert]"    overwrite-mode
+  [[ -n "$key[Backspace]" ]] && bindkey -- "$key[Backspace]" backward-delete-char
+  [[ -n "$key[Delete]"    ]] && bindkey -- "$key[Delete]"    delete-char
+  [[ -n "$key[Up]"        ]] && bindkey -- "$key[Up]"        up-line-or-history
+  [[ -n "$key[Down]"      ]] && bindkey -- "$key[Down]"      down-line-or-history
+  [[ -n "$key[Left]"      ]] && bindkey -- "$key[Left]"      backward-char
+  [[ -n "$key[Right]"     ]] && bindkey -- "$key[Right]"     forward-char
+  bindkey "\e[1~" beginning-of-line
+  bindkey "\e[4~" end-of-line
+  bindkey "\e[H" beginning-of-line
+  bindkey "\e[F" end-of-line
+  bindkey "\eOH" beginning-of-line
+  bindkey "\eOF" end-of-line
+  bindkey "^A" beginning-of-line
+  bindkey "^E" end-of-line
+  bindkey "^R" history-incremental-search-backward
+  bindkey "^H" backward-delete-char
+  bindkey "^?" backward-delete-char
+  bindkey "^[[1;5C" forward-word
+  bindkey "^[[1;5D" backward-word
+  bindkey "\e[5~" beginning-of-history
+  bindkey "\e[6~" end-of-history
+  bindkey "\e[3~" delete-char
+  bindkey "\e[2~" quoted-insert
+  bindkey "\e[5C" forward-word
+  bindkey "\e[5D" backward-word
+  if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
+    function zle-line-init () {
+      echoti smkx
+    }
+    function zle-line-finish () {
+      echoti rmkx
+    }
+    zle -N zle-line-init
+    zle -N zle-line-finish
+  fi
+else
+  shopt -s nocaseglob
+  shopt -s histappend
+  shopt -s checkwinsize
+  shopt -s dotglob
+  shopt -s no_empty_cmd_completion
+  . /etc/bash_completion
+fi
+
+if [ "$SHELL" = "/bin/zsh.exe" ]; then
+function OpenIniFile {
+echo 'Opening "C:\Users\asad\DOCUME~1\MobaXterm\MobaXterm.ini"...'
+/bin/MobaBox.exe open 'C:\Users\asad\DOCUME~1\MobaXterm\MobaXterm.ini'
+}
+else
+function OpenIniFile {
+echo "Opening \"C:\Users\asad\DOCUME~1\MobaXterm\MobaXterm.ini\"..."
+/bin/cygstart.exe "`cygpath -u "C:\Users\asad\DOCUME~1\MobaXterm\MobaXterm.ini"`"
+}
+fi
+[ -e "/home/mobaxterm/.bashrc" ] && . /home/mobaxterm/.bashrc
+[ -e "/etc/sessionsaliases.sh" ] && . /etc/sessionsaliases.sh
+
+fi
+fi
+. /etc/baseprofile
+if [ "$SHELL" = "/bin/bash.exe" ]; then
+  /bin/busybox.exe ls /etc/profile.d >/dev/null 2>/dev/null
+fi
+if [ -d "/etc/profile.d" ]; then
+  for sc in `$LS /etc/profile.d/*.sh 2>/dev/null`; do . "$sc"; done
+fi
+
+

@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<fieldset>
+    <legend> Dashboard </legend>
+
+@if (Session["UserName"] != null) { 
+    <text>Welcome @Session["UserName"].ToString() </text> <br /><br />
+    } 
+
+@if (Session["LastLogin"] != null)
+    {
+        <text>LastLogin: @Session["LastLogin"].ToString() </text><br />
+    }
+
+@if (Session["LastFailLogin"] != null)
+{
+    <text>LastFailedLogin :  @Session["LastFailLogin"].ToString() </text>
+}
+     
+</fieldset>
